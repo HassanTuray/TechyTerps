@@ -9,6 +9,9 @@ python = ">=3.11.0,<3.12"
 flask = "^3.0.0"
 gunicorn = "^21.2.0"
 requests = "^2.32.5"
+scikit-learn = "^1.7.2"
+joblib = "^1.5.2"
+pandas = "^2.3.3"
 
 [tool.pyright]
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md
