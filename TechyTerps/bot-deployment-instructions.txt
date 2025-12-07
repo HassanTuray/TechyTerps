@@ -1,0 +1,220 @@
+Nice 🎉 Glad it’s alive.
+
+Here’s a clean, copy-and-paste guide you can drop in GroupMe/Discord/Notion for the rest of your team.
+
+---
+
+# 🧵 How to Set Up the GroupMe Bot on Replit
+
+Follow these steps to get a GroupMe bot running on Replit and responding to messages.
+
+---
+
+## 1. Create the bot in GroupMe
+
+1. Go to: [https://dev.groupme.com/bots](https://dev.groupme.com/bots)
+2. Click **"Create Bot"**.
+3. Choose the **group** you want the bot in.
+4. Give it a name (e.g. `ReplitBot`).
+5. Click **Submit**.
+6. After creating it, you’ll see a **Bot ID** — **copy that**. We will paste it into the code.
+
+---
+
+## 2. Make the Replit project
+
+1. Go to [https://replit.com](https://replit.com)
+2. Click **+ Create Repl**.
+3. Choose **Python** (or **Flask** — either is fine, we’ll force-run it).
+4. Name it (example): `GroupMeTest`.
+5. Create the Repl.
+
+---
+
+## 3. Add the Python code
+
+Create / edit `main.py` and paste this **exact** code (replace the BOT_ID):
+
+```python
+from flask import Flask, request
+import requests
+
+app = Flask(__name__)
+
+# 🔴 REPLACE THIS WITH YOUR BOT ID FROM dev.groupme.com/bots
+BOT_ID = "PASTE_YOUR_BOT_ID_HERE"
+
+@app.route("/", methods=["GET", "HEAD"])
+def head_check():
+    # GroupMe will use this to check if the URL is alive
+    return "ok", 200
+
+@app.route("/", methods=["POST"])
+def callback():
+    data = request.get_json()
+    print("Received webhook:", data)
+
+    if not data:
+        return "ok", 200
+
+    text = (data.get("text") or "").lower()
+
+    if "hello" in text:
+        send_message("Hey there! I'm your bot running on Replit.")
+    elif "ping" in text:
+        send_message("pong")
+    elif "bye" in text:
+        send_message("Goodbye!")
+
+    return "ok", 200
+
+def send_message(msg):
+    url = "https://api.groupme.com/v3/bots/post"
+    payload = {"bot_id": BOT_ID, "text": msg}
+    r = requests.post(url, json=payload)
+    print("Sent message:", msg, "status:", r.status_code)
+
+if __name__ == "__main__":
+    print("Bot server starting on Replit...")
+    # Replit exposes port 8080
+    app.run(host="0.0.0.0", port=8080)
+```
+
+👉 **Important:** change
+
+```python
+BOT_ID = "PASTE_YOUR_BOT_ID_HERE"
+```
+
+to your actual bot ID from GroupMe.
+
+---
+
+## 4. Tell Replit how to run it
+
+Create (or edit) a file called **`.replit`** in the root of the project and put this in it:
+
+```ini
+run = "python3 main.py"
+```
+
+This forces Replit to run your Flask app directly (not gunicorn on port 5000).
+
+---
+
+## 5. Install Flask + Requests (Nix way)
+
+Create (or edit) **`replit.nix`** and put this in:
+
+```nix
+{ pkgs }: {
+  deps = [
+    pkgs.python311Full
+    pkgs.python311Packages.flask
+    pkgs.python311Packages.requests
+  ];
+}
+```
+
+Replit will rebuild, then you can click **Run** again.
+
+(If you don’t want to touch Nix, you can just `pip install flask requests` in the Replit shell, but the Nix way is cleaner.)
+
+---
+
+## 6. Run it and check it
+
+1. Click **Run**.
+2. In the console you should see:
+
+   * `Bot server starting on Replit...`
+   * `Running on http://0.0.0.0:8080`
+3. Click **“Open in new tab”** (the webview).
+4. In the browser you should see:
+
+   ```
+   ok
+   ```
+
+If you see `ok`, your Flask server is reachable ✅
+
+---
+
+## 7. Get the public URL
+
+The URL in the browser will look like:
+
+```text
+https://<repl-name>.<your-username>.repl.co/
+```
+
+Example from our setup:
+
+```text
+https://GroupMeTest.hfturay1.repl.co/
+```
+
+**That exact URL** is the one GroupMe needs.
+
+---
+
+## 8. Add the callback in GroupMe
+
+1. Go back to [https://dev.groupme.com/bots](https://dev.groupme.com/bots)
+
+2. Click your bot → **Edit**
+
+3. In **Callback URL**, paste your Replit URL, e.g.:
+
+   ```text
+   https://GroupMeTest.hfturay1.repl.co/
+   ```
+
+4. Click **Update**.
+
+If GroupMe can reach it, it won’t show the “callback URL validation failed” error.
+
+---
+
+## 9. Test it
+
+1. Go to the **GroupMe group** where the bot was added.
+
+2. Send a message like:
+
+   ```text
+   ping
+   ```
+
+3. Look at the Replit console — you should see something like:
+
+   ```text
+   Received webhook: {'text': 'ping', ...}
+   Sent message: pong status: 202
+   ```
+
+4. The bot should reply in the GroupMe chat.
+
+---
+
+## 10. Notes / Gotchas
+
+* ✅ Replit must stay **running** for GroupMe to reach it.
+* ✅ The bot must be **added to the GroupMe group** or it won’t receive messages.
+* ✅ The callback must be **HTTPS** (Replit gives HTTPS by default).
+* ✅ If someone else in the group makes their **own** Replit, they must use **their** Replit URL and **their** GroupMe Bot ID.
+
+---
+
+## 11. TL;DR for teammates
+
+1. Make a bot on [https://dev.groupme.com/bots](https://dev.groupme.com/bots) → copy **Bot ID**
+2. Make a Replit → paste the Flask code → put your **Bot ID** in it
+3. Add `.replit` with `run = "python3 main.py"`
+4. Run → open URL → see `ok`
+5. Paste that URL back into the bot’s **Callback URL**
+6. Say “ping” in the group → bot replies “pong”
+
+---
+
+You can send that to the team as-is. If you want, I can make a version with placeholders like `<YOUR_BOT_ID>` / `<YOUR_REPL_URL>` so they don’t forget to change those.
