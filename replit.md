@@ -55,9 +55,17 @@ Preferred communication style: Simple, everyday language.
 - **scikit-learn (implicit):** Required by the loaded Naive Bayes model pipeline
 
 ## File System Dependencies
+- Bot code: `TechyTerps/bot/bot.py`
 - Model file at relative path: `TechyTerps/model/models/naive_bayes_pipeline.pkl`
 - No database currently used - stateless operation
 - All data processing happens in-memory during request handling
+
+## Bot Message Filtering
+- Bot ignores messages from other bots (sender_type == 'bot') to prevent infinite loops
+- Only user messages are processed for scam detection and keyword responses
+
+## Callback URL Configuration
+- GroupMe callback URL must include port: `https://<replit-url>:8080`
 
 ## Hosting Platform
 **Platform:** Replit
