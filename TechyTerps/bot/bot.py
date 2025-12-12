@@ -45,4 +45,4 @@ def send_message(msg):
 
 if __name__ == "__main__":
     print("Bot server starting on Replit...")
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=5000)
