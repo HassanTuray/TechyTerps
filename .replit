@@ -39,10 +39,10 @@ args = "GroupMe Bot"
 name = "GroupMe Bot"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python main.py"
-waitForPort = 8080
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python TechyTerps/bot/bot.py"
+waitForPort = 8080
