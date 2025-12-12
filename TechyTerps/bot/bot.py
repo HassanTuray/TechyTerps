@@ -62,18 +62,13 @@ def callback():
         return "ok", 200
 
     scam_detected, confidence = is_scam(text)
-    if scam_detected and confidence > 0.7:
-        warning_msg = f"Warning: This message from {name} may be a scam (confidence: {confidence:.1%}). Please be cautious and do not click any suspicious links."
-        send_message(warning_msg)
-        print(f"Scam detected from {name}: {text[:50]}... (confidence: {confidence:.1%})")
-        return "ok", 200
-
-    if "hello" in text_lower:
-        send_message("Hey there! I'm your bot running on Replit.")
-    elif "ping" in text_lower:
-        send_message("pong")
-    elif "bye" in text_lower:
-        send_message("See you later! " + name)
+    if (name != "Scam_Detector" and len(text.split()) > 8 ):
+        scam_detected, confidence = is_scam(text)
+        if scam_detected and confidence > 0.7:
+            warning_msg = f"Warning: This message from {name} may be a scam (confidence: {confidence:.1%}). Please be cautious and do not click any suspicious links."
+            send_message(warning_msg)
+            print(f"Scam detected from {name}: {text[:50]}... (confidence: {confidence:.1%})")
+            return "ok", 200
 
     return "ok", 200
 

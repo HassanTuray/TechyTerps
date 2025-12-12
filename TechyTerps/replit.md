@@ -1,10 +1,6 @@
 # Overview
 
-This is a GroupMe bot application that detects scam messages using machine learning. The bot is deployed on Replit and integrates with GroupMe's webhook API to receive and respond to messages. When messages are received, they are analyzed using a Naive Bayes classifier to determine if they are scam attempts. The bot can also respond to simple keyword commands like "hello", "ping", and "bye".
-
-# User Preferences
-
-Preferred communication style: Simple, everyday language.
+This is a GroupMe bot application that detects scam messages using machine learning. The bot is deployed on Replit and integrates with GroupMe's webhook API to receive and respond to messages. When messages are received, they are analyzed using a Naive Bayes classifier to determine if they are scam attempts.
 
 # System Architecture
 
@@ -20,11 +16,10 @@ Preferred communication style: Simple, everyday language.
 **Error Handling:** Graceful degradation - if model fails to load, scam detection is disabled but bot remains functional.
 
 ## Bot Response Logic
-**Decision:** Dual-mode operation - keyword responses and scam detection
+**Decision:** Scam detection
 **Rationale:** 
-- Simple keyword matching ("hello", "ping", "bye") for basic interactivity
 - ML-based scam detection for security monitoring
-**Alternatives Considered:** Could use regex patterns or NLP libraries, but keyword matching is sufficient for basic commands and the ML model handles complex text analysis.
+**Alternatives Considered:** Could use other models based on current notebooks
 
 ## Deployment Architecture
 **Decision:** Replit hosting with Flask development server
