@@ -27,6 +27,7 @@ def load_model():
 
 def is_scam(text):
     """Check if a message is a scam using the trained model."""
+    print("Checking for scam message...")
     if scam_model is None:
         return False, 0.0
     try:
@@ -42,7 +43,6 @@ def is_scam(text):
 # Load model when module is imported
 load_model()
 
-
 @app.route("/", methods=["GET", "HEAD"])
 def head_check():
     return "ok", 200
@@ -55,29 +55,22 @@ def callback():
     if not data:
         return "ok", 200
 
-    memberid = data.get("member_id", "")
     name = data.get("name", "")
     text = data.get("text", "")
     text_lower = text.lower()
     
-    if not text:
-        return "ok", 200
+   
 
     # Check for scam messages first
-    scam_detected, confidence = is_scam(text)
-    if scam_detected and confidence > 0.7:
-        warning_msg = f"Warning: This message from {name} may be a scam (confidence: {confidence:.1%}). Please be cautious and do not click any suspicious links or share personal information."
-        send_message(warning_msg)
-        print(f"Scam detected from {name}: {text[:50]}... (confidence: {confidence:.1%})")
-        return "ok", 200
+    if (name != "Scam_Detector" and text.split().len > 8 ):
+        scam_detected, confidence = is_scam(text)
+        if scam_detected and confidence > 0.7:
+            warning_msg = f"Warning: This message from {name} may be a scam (confidence: {confidence:.1%}). Please be cautious and do not click any suspicious links."
+            send_message(warning_msg)
+            print(f"Scam detected from {name}: {text[:50]}... (confidence: {confidence:.1%})")
+            return "ok", 200
+        
 
-    # Normal bot responses
-    if "hello" in text_lower:
-        send_message("Hey there! I'm your bot running on Replit.")
-    elif "ping" in text_lower:
-        send_message("pong")
-    elif "bye" in text_lower:
-        send_message("See you later! " + name)
 
     return "ok", 200
 
